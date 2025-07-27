@@ -114,4 +114,28 @@ public class MembersController(
         
         return BadRequest("Cannot set main photo");
     }
+
+    [HttpDelete("delete-photo/{photoId}")]
+    public async Task<ActionResult<Photo>> DeletePhoto(int photoId)
+    {
+        var member = await memberRepository.GetMemberForUpdate(User.GetMemberId());
+        
+        if (member == null) return NotFound("Could not get member");
+        
+        var photo = member.Photos.SingleOrDefault(x => x.Id == photoId);
+        
+        if (photo == null || photo.Url == member.ImageUrl) return NotFound("This photo cannot be deleted");
+
+        if (photo.PublicId != null)
+        {
+            var result = await photoService.DeletePhotoAsync(photo.PublicId);
+            if (result.Error != null) return BadRequest(result.Error.Message);
+        }
+        
+        member.Photos.Remove(photo);
+        
+        if (await memberRepository.SaveAllAsync()) return Ok();
+        
+        return BadRequest("Problem deleting the photo");
+    }
 }
