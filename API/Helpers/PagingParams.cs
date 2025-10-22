@@ -1,6 +1,6 @@
 namespace API.Helpers;
 
-public class PagingParams
+public class PagingParams 
 {
     public int PageNumber { get; set; } = 1;
     private const int MaxPageSize = 50;
