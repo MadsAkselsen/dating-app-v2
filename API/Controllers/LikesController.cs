@@ -1,6 +1,7 @@
 using API.Data;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,8 +45,9 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<Member>>> GetMemberLikes(string predicate)
+    public async Task<ActionResult<IReadOnlyList<Member>>> GetMemberLikes([FromQuery]LikesParams likesParams)
     {
-        return Ok(await likesRepository.GetMemberLikes(predicate, User.GetMemberId()));
+        likesParams.CurrentMemberId = User.GetMemberId();
+        return Ok(await likesRepository.GetMemberLikes(likesParams));
     }
 }
