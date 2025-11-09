@@ -19,7 +19,7 @@ public class LikesRepository(AppDbContext context) : ILikesRepository
 
         switch (predicate)
         {
-            case "Liked":
+            case "liked":
                 return await query.Where(x => x.SourceMemberId == memberId)
                     .Select(x => x.TargetMember)
                     .ToListAsync();
