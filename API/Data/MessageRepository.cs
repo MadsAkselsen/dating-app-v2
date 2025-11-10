@@ -35,36 +35,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
             _ => query.Where(x => x.RecipientId == messageParams.MemberId)
         };
         
-        var messageQuery = query.Select(message => message.ToDto());
-        // var messageQuery = query.Select(message => new MessageDto
-        // {
-        //     Id = message.Id,
-        //     SenderId = message.SenderId,
-        //     SenderDisplayName = message.Sender.DisplayName,
-        //     SenderImageUrl = message.Sender.ImageUrl,
-        //     RecipientId = message.RecipientId,
-        //     RecipientDisplayName = message.Recipient.DisplayName,
-        //     RecipientImageUrl = message.Recipient.ImageUrl,
-        //     Content = message.Content,
-        //     DateRead = message.DateRead,
-        //     MessageSent = message.MessageSent,
-        // });
-        
         var messageQuery = query.Select(MessageExtensions.ToDtoProjection());
-        
-        // var messageQuery = query.Select(message => new MessageDto
-        // {
-        //     Id = message.Id,
-        //     SenderId = message.SenderId,
-        //     SenderDisplayName = message.Sender.DisplayName,
-        //     SenderImageUrl = message.Sender.ImageUrl,
-        //     RecipientId = message.RecipientId,
-        //     RecipientDisplayName = message.Recipient.DisplayName,
-        //     RecipientImageUrl = message.Recipient.ImageUrl,
-        //     Content = message.Content,
-        //     DateRead = message.DateRead,
-        //     MessageSent = message.MessageSent,
-        // });
         
         return await PaginationHelper.CreateAsync(messageQuery, messageParams.PageNumber, messageParams.PageSize);
     }
