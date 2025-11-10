@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
 using API.Helpers;
 using API.Interfaces;
 
@@ -22,10 +23,50 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
         return await context.Messages.FindAsync(messageId);
     }
 
-    public Task<PaginatedResult<MessageDto>> GetMessagesForMember()
+    public async Task<PaginatedResult<MessageDto>> GetMessagesForMember(MessageParams messageParams)
     {
-        // return await context.Messages.Select()
-        throw new NotImplementedException();
+        var query = context.Messages
+            .OrderByDescending(x => x.MessageSent)
+            .AsQueryable();
+
+        query = messageParams.Container switch
+        {
+            "Outbox" => query.Where(x => x.SenderId == messageParams.MemberId),
+            _ => query.Where(x => x.RecipientId == messageParams.MemberId)
+        };
+        
+        var messageQuery = query.Select(message => message.ToDto());
+        // var messageQuery = query.Select(message => new MessageDto
+        // {
+        //     Id = message.Id,
+        //     SenderId = message.SenderId,
+        //     SenderDisplayName = message.Sender.DisplayName,
+        //     SenderImageUrl = message.Sender.ImageUrl,
+        //     RecipientId = message.RecipientId,
+        //     RecipientDisplayName = message.Recipient.DisplayName,
+        //     RecipientImageUrl = message.Recipient.ImageUrl,
+        //     Content = message.Content,
+        //     DateRead = message.DateRead,
+        //     MessageSent = message.MessageSent,
+        // });
+        
+        var messageQuery = query.Select(MessageExtensions.ToDtoProjection());
+        
+        // var messageQuery = query.Select(message => new MessageDto
+        // {
+        //     Id = message.Id,
+        //     SenderId = message.SenderId,
+        //     SenderDisplayName = message.Sender.DisplayName,
+        //     SenderImageUrl = message.Sender.ImageUrl,
+        //     RecipientId = message.RecipientId,
+        //     RecipientDisplayName = message.Recipient.DisplayName,
+        //     RecipientImageUrl = message.Recipient.ImageUrl,
+        //     Content = message.Content,
+        //     DateRead = message.DateRead,
+        //     MessageSent = message.MessageSent,
+        // });
+        
+        return await PaginationHelper.CreateAsync(messageQuery, messageParams.PageNumber, messageParams.PageSize);
     }
 
     public Task<IReadOnlyList<MessageDto>> GetMessageThread(string currentMemberId, string recipientId)
