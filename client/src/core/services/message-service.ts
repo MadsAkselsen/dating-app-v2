@@ -1,8 +1,9 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Message} from '../../types/message';
 import {PaginatedResult} from '../../types/pagination';
+import { Member } from '../../types/member';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,8 @@ import {PaginatedResult} from '../../types/pagination';
 export class MessageService {
   private baseUrl = environment.apiUrl;
   private http = inject(HttpClient);
+  editMode = signal(false);
+  member = signal<Member | null>(null);
 
   getMessages(container: string, pageNumber: number, pageSize: number) {
     let params = new HttpParams();
@@ -19,5 +22,9 @@ export class MessageService {
     params = params.append('container', container);
 
     return this.http.get<PaginatedResult<Message>>(this.baseUrl + 'messages', {params})
+  }
+
+  getMessageThread(memberId: string) {
+    return this.http.get<Message[]>(this.baseUrl + 'messages/thread/' + memberId)
   }
 }

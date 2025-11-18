@@ -34,7 +34,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasForeignKey(s => s.TargetMemberId)
             .OnDelete(DeleteBehavior.NoAction);
 
-
+https://www.ug.dk/videregaaende-uddannelser/bacheloruddannelser/software-engineering
         modelBuilder.Entity<Message>()
             .HasOne(x => x.Recipient)
             .WithMany(m => m.MessagesReceived)
