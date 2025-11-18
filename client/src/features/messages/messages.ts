@@ -1,61 +1,62 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
-import {PaginatedResult} from '../../types/pagination';
-import {Message} from '../../types/message';
-import {MessageService} from '../../core/services/message-service';
-import {Paginator} from '../../shared/paginator/paginator';
-import {RouterLink} from '@angular/router';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { PaginatedResult } from '../../types/pagination';
+import { Message } from '../../types/message';
+import { MessageService } from '../../core/services/message-service';
+import { Paginator } from '../../shared/paginator/paginator';
+import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-messages',
-  imports: [
-    Paginator,
-    RouterLink,
-    DatePipe
-  ],
-  templateUrl: './messages.html',
-  styleUrl: './messages.css'
+	selector: 'app-messages',
+	imports: [
+		Paginator,
+		RouterLink,
+		DatePipe
+	],
+	templateUrl: './messages.html',
+	styleUrl: './messages.css'
 })
 export class Messages implements OnInit {
-  private messageService  = inject(MessageService);
-  protected container = 'Inbox';
-  protected fetchedContainer = 'Inbox';
-  protected pageNumber = 1;
-  protected pageSize = 10;
-  protected paginatedMessages = signal<PaginatedResult<Message> | null>(null);
+	private messageService = inject(MessageService);
+	protected container = 'Inbox';
+	protected fetchedContainer = 'Inbox';
+	protected pageNumber = 1;
+	protected pageSize = 10;
+	protected paginatedMessages = signal<PaginatedResult<Message> | null>(null);
 
-  tabs = [
-    {label: 'Inbox', value: 'Inbox'},
-    {label: 'Outbox', value: 'Outbox'},
-  ]
+	tabs = [
+		{ label: 'Inbox', value: 'Inbox' },
+		{ label: 'Outbox', value: 'Outbox' },
+	]
 
-  ngOnInit(): void {
-    this.loadMessages();
-  }
+	ngOnInit(): void {
+		this.loadMessages();
+	}
 
-  loadMessages() {
-    this.messageService.getMessages(this.container, this.pageNumber, this.pageSize).subscribe({
-      next: response => {this.paginatedMessages.set(response),
-        this.fetchedContainer = this.container;
-      }
-    });
-  }
+	loadMessages() {
+		this.messageService.getMessages(this.container, this.pageNumber, this.pageSize).subscribe({
+			next: response => {
+				this.paginatedMessages.set(response),
+					this.fetchedContainer = this.container;
+			}
+		});
+	}
 
-  get isInbox() {
-    return this.fetchedContainer === "Inbox";
-  }
+	get isInbox() {
+		return this.fetchedContainer === "Inbox";
+	}
 
-  setContainer(container: string) {
-    this.container = container;
-    this.pageNumber = 1;
-    this.loadMessages();
-  }
+	setContainer(container: string) {
+		this.container = container;
+		this.pageNumber = 1;
+		this.loadMessages();
+	}
 
-  onPageChange(event: {pageNumber: number, pageSize: number}) {
-    this.pageSize = event.pageSize;
-    this.pageNumber = event.pageNumber;
-    this.loadMessages();
-  }
+	onPageChange(event: { pageNumber: number, pageSize: number }) {
+		this.pageSize = event.pageSize;
+		this.pageNumber = event.pageNumber;
+		this.loadMessages();
+	}
 
 }
 
