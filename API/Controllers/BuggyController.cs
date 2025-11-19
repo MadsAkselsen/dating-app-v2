@@ -31,7 +31,7 @@ public class BuggyController : BaseApiController
         throw new BadRequestException("This was not a good request");
     }
 
-    [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
     [HttpGet("admin-secret")]
     public ActionResult<string> GetSecretAdmin()
     {
