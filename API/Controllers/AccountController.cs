@@ -8,6 +8,7 @@ using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace API.Controllers;
@@ -62,4 +63,6 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         if (!result) return Unauthorized("Invalid password");
         return await user.ToDto(tokenService);
     }
+    
+    
 }
