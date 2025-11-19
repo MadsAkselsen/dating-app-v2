@@ -61,12 +61,14 @@ app.UseAuthorization(); // Are they allowed to do what they are trying to do?
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();
+
 var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<AppDbContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
     await context.Database.MigrateAsync();
-    await Seed.SeedUsers(context);
+    await Seed.SeedUsers(userManager);
 }
 catch (Exception ex)
 {
