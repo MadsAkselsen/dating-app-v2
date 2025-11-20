@@ -57,7 +57,11 @@ builder.Services.AddAuthorizationBuilder()
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200","https://localhost:4200"));
+app.UseCors(x => x
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials() // allows to send/receive cookies from the API server
+    .WithOrigins("http://localhost:4200", "https://localhost:4200"));
 
 app.UseAuthentication(); // Who are you?
 app.UseAuthorization(); // Are they allowed to do what they are trying to do?

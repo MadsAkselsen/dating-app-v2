@@ -21,6 +21,14 @@
         "@schematics/angular:interceptor": {
           "skipTests": true,
           "path": "src/core/interceptors"
+        },
+        "@schematics/angular:pipes": {
+          "skipTests": true,
+          "path": "src/core/pipes"
+        },
+        "@schematics/angular:directives": {
+          "skipTests": true,
+          "path": "src/shared/directives"
         }
       },
       "root": "",
