@@ -5,6 +5,7 @@ import { Member } from '../../../types/member';
 import { AgePipe } from '../../../core/pipes/age-pipe';
 import { AccountService } from '../../../core/services/account-service';
 import { MemberService } from '../../../core/services/member-service';
+import { PresenceService } from '../../../core/services/presence-service';
 
 @Component({
   selector: 'app-member-detailed',
@@ -14,6 +15,7 @@ import { MemberService } from '../../../core/services/member-service';
 })
 export class MemberDetailed implements OnInit {
   private accountService = inject(AccountService);
+  protected presenceService = inject(PresenceService);
   protected memberService = inject(MemberService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
