@@ -104,4 +104,20 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
         // For this to work, '.AllowCredentials()' must be set in program.cs
         Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
     }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<ActionResult> Logout()
+    {
+        await userManager.Users
+            .Where(x => x.Id == User.GetMemberId())
+            .ExecuteUpdateAsync<AppUser>(setters => setters
+                .SetProperty(x => x.RefreshToken, _ => null)
+                .SetProperty(x => x.RefreshTokenExpiry, _ => null)
+            );
+
+        Response.Cookies.Delete("refreshToken");
+
+        return Ok();
+    }
 }
