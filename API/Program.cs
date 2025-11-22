@@ -87,6 +87,7 @@ app.UseAuthorization(); // Are they allowed to do what they are trying to do?
 
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/messages");
 
 using var scope = app.Services.CreateScope();
 

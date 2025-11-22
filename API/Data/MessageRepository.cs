@@ -64,4 +64,29 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
     {
         return await context.SaveChangesAsync() > 0;
     }
+
+    public void AddGroup(Group group)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveConnection(string connectionId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Connection> GetConnection(string connectionId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Group?> GetMessageGroup(string groupName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Group?> GetGroupForConnection(string connectionId)
+    {
+        throw new NotImplementedException();
+    }
 }

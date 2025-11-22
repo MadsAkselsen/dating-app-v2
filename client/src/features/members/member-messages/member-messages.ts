@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { TimeAgoPipe } from '../../../core/pipes/time-ago-pipe';
 import { FormsModule } from '@angular/forms';
 import { PresenceService } from '../../../core/services/presence-service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-member-messages',
@@ -15,16 +16,15 @@ import { PresenceService } from '../../../core/services/presence-service';
 })
 export class MemberMessages implements OnInit {
 	@ViewChild('messageEndRef') messageEndRef!: ElementRef
-	private messageService = inject(MessageService);
+	protected messageService = inject(MessageService);
 	private memberService = inject(MemberService);
+	private route = inject(ActivatedRoute)
 	protected presenceService = inject(PresenceService);
-	protected messages = signal<Message[]>([]);
 	protected messageContent = '';
 
-	contructor() {
+	constructor() {
 		effect(() => {
-			console.log("effect hook")
-			const currentMessages = this.messages();
+			const currentMessages = this.messageService.messageThread();
 			if (currentMessages.length > 0) {
 				this.scrollToBottom();
 			}
@@ -32,21 +32,13 @@ export class MemberMessages implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.loadMessages();
-	}
-
-	loadMessages() {
-		const memberId = this.memberService.member()?.id;
-		if (memberId) {
-			this.messageService.getMessageThread(memberId).subscribe({
-				next: messages => this.messages.set(messages.map(message => ({
-					...message,
-					currentUserSender: message.senderId !== memberId
-				}))),
-				complete: () => this.scrollToBottom()
-			})
-		}
-
+		this.route.parent?.paramMap.subscribe({
+			next: params => {
+				const otherUserId = params.get('id');
+				if (!otherUserId) throw new Error('No member id provided in route parameters.');
+				this.messageService.createHubConnection(otherUserId);
+			}
+		})
 	}
 
 	sendMessage() {
@@ -54,16 +46,7 @@ export class MemberMessages implements OnInit {
 		if (!recipientId) {
 			return;
 		};
-		this.messageService.sendMessage(recipientId, this.messageContent).subscribe({
-			next: message => {
-				this.messages.update(messages => {
-					message.currentUserSender = true;
-					return [...messages, message]
-				})
-				this.messageContent = '';
-			},
-			complete: () => this.scrollToBottom()
-		})
+		this.messageService.sendMessage(recipientId, this.messageContent)?.then(() => this.messageContent = '')
 	}
 
 	scrollToBottom() {

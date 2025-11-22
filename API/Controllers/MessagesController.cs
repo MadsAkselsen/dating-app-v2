@@ -13,7 +13,6 @@ public class MessagesController(IMessageRepository messageRepository, IMemberRep
     [HttpPost]
     public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
     {
-        
         var sender = await memberRepository.GetMemberByIdAsync(User.GetMemberId());
         var recipient = await memberRepository.GetMemberByIdAsync(createMessageDto.RecipientId);
 
