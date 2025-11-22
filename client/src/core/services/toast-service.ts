@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToastService {
+  private router = inject(Router);
 
   constructor() {
     this.createToastContainer();
@@ -18,15 +20,26 @@ export class ToastService {
     }
   }
 
-  private createToastElement(message: string, alertClass: string, duration = 5000) {
+  private createToastElement(message: string, alertClass: string, duration = 5000, 
+      avatar?: string, route?: string) {
+        console.log('Creating toast:', {message, alertClass, duration, avatar, route});
     const toastContainer = document.getElementById('toast-container');
     if (!toastContainer) return;
 
     const toast = document.createElement('div');
-    toast.classList.add('alert', alertClass, 'shadow-lg');
+    toast.classList.add('alert', alertClass, 'shadow-lg', 'fled', 
+      'items-center', 'gap-3', 'cursor-pointer');
+
+    if (route) {
+      toast.addEventListener('click', () => {
+        this.router.navigateByUrl(route)
+      })
+    }
+
     toast.innerHTML = `
-    <span>${message}</span>
-    <button class="ml-4 btn btn-sm btn-ghost">x</button>
+      ${avatar ? `<img src=${avatar || '/user.png'} class='w-10 h-10 rounded'` : ''}
+      <span>${message}</span>
+      <button class="ml-4 btn btn-sm btn-ghost">x</button>
     `
 
     toast.querySelector('button')?.addEventListener('click', () => {
@@ -42,19 +55,20 @@ export class ToastService {
     }, duration);
   }
 
-  success(message: string, duration?: number) {
-    this.createToastElement(message, 'alert-success', duration);
+  success(message: string, duration?: number, avatar?: string, route?: string) {
+    this.createToastElement(message, 'alert-success', duration), avatar, route;
   }
 
-  error(message: string, duration?: number) {
+  error(message: string, duration?: number, avatar?: string, route?: string) {
     this.createToastElement(message, 'alert-error', duration);
   }
 
-  info(message: string, duration?: number) {
-    this.createToastElement(message, 'alert-info', duration);
+  info(message: string, duration?: number, avatar?: string, route?: string) {
+    console.log('Info toast called with:', {message, duration, avatar, route});
+    this.createToastElement(message, 'alert-info', duration, avatar, route);
   }
 
-  warning(message: string, duration?: number) {
+  warning(message: string, duration?: number, avatar?: string, route?: string) {
     this.createToastElement(message, 'alert-warning', duration);
   }
 }

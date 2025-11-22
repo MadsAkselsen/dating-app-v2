@@ -67,26 +67,33 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
 
     public void AddGroup(Group group)
     {
-        throw new NotImplementedException();
+        context.Groups.Add(group);
     }
 
-    public Task RemoveConnection(string connectionId)
+    public async Task RemoveConnection(string connectionId)
     {
-        throw new NotImplementedException();
+        await context.Connections
+            .Where(x => x.ConnectionId == connectionId)
+            .ExecuteDeleteAsync();
     }
 
-    public Task<Connection> GetConnection(string connectionId)
+    public async Task<Connection?> GetConnection(string connectionId)
     {
-        throw new NotImplementedException();
+        return await context.Connections.FindAsync(connectionId);
     }
 
-    public Task<Group?> GetMessageGroup(string groupName)
+    public async Task<Group?> GetMessageGroup(string groupName)
     {
-        throw new NotImplementedException();
+        return await context.Groups
+            .Include(x => x.Connections)
+            .FirstOrDefaultAsync(x => x.Name == groupName);
     }
 
-    public Task<Group?> GetGroupForConnection(string connectionId)
+    public async Task<Group?> GetGroupForConnection(string connectionId)
     {
-        throw new NotImplementedException();
+        return await context.Groups
+            .Include(x => x.Connections)
+            .Where(x => x.Connections.Any(c => c.ConnectionId == connectionId))
+            .FirstOrDefaultAsync();
     }
 }
