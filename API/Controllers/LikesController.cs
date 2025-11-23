@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class LikesController(IUnitOFWork unitOfWork) : BaseApiController
+public class LikesController(IUnitOfWork unitOfWork) : BaseApiController
 {
     [HttpPost("{targetMemberId}")]
     public async Task<ActionResult> ToggleLike(string targetMemberId)

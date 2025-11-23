@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class MessagesController(IUnitOFWork unitOfWork) : BaseApiController
+public class MessagesController(IUnitOfWork unitOfWork) : BaseApiController
 {
     [HttpPost]
     public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)

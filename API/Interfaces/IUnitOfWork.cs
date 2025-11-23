@@ -1,10 +1,11 @@
 namespace API.Interfaces;
 
-public interface IUnitOFWork
+public interface IUnitOfWork
 {
     IMemberRepository MemberRepository { get; }
     IMessageRepository MessageRepository { get; }
     ILikesRepository LikesRepository { get; }
+    IPhotoRepository PhotoRepository { get; }
     Task<bool> Complete();
-    bool hasChanges();
+    bool HasChanges();
 }

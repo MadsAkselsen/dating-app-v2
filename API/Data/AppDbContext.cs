@@ -19,6 +19,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Photo>().HasQueryFilter(x => x.IsApproved);
+
         modelBuilder.Entity<IdentityRole>()
             .HasData(
                 new IdentityRole { Id = "member-id", Name = "Member", NormalizedName = "MEMBER" },

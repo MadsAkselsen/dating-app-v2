@@ -12,7 +12,7 @@ namespace API.Controllers;
 
 [Authorize]
 public class MembersController(
-    IUnitOFWork unitOfWork,
+    IUnitOfWork unitOfWork,
     IPhotoService photoService
     ) : BaseApiController
 {
@@ -37,7 +37,8 @@ public class MembersController(
     [HttpGet("{id}/photos")]
     public async Task<ActionResult<IReadOnlyList<Photo>>> GetMemberPhotos(string id)
     {
-        return Ok(await unitOfWork.MemberRepository.GetPhotosForMemberAsync(id));
+        var isCurrentUser = User.GetMemberId() == id;
+        return Ok(await unitOfWork.MemberRepository.GetPhotosForMemberAsync(id, isCurrentUser));
     }
 
     [HttpPut]
@@ -83,12 +84,13 @@ public class MembersController(
             MemberId = member.Id
         };
 
-        if (member.ImageUrl != null)
-        {
-            member.ImageUrl = photo.Url;
-            member.User.ImageUrl = photo.Url;
-        }
-        
+        // We don't want to set unapproved photos as min photo before they are approved
+        // if (member.ImageUrl != null)
+        // {
+        //     member.ImageUrl = photo.Url;
+        //     member.User.ImageUrl = photo.Url;
+        // }
+        //
         member.Photos.Add(photo);
         
         if (await unitOfWork.Complete()) return Ok(photo);
@@ -132,10 +134,15 @@ public class MembersController(
         if (photo.PublicId != null)
         {
             var result = await photoService.DeletePhotoAsync(photo.PublicId);
+            
             if (result.Error != null) return BadRequest(result.Error.Message);
         }
         
         member.Photos.Remove(photo);
+        
+        var photoFromDb = await unitOfWork.PhotoRepository.GetPhotoByIdAsync(photoId);
+        if (photoFromDb == null) return BadRequest("Could not get photo from db");
+        unitOfWork.PhotoRepository.RemovePhoto(photoFromDb);
         
         if (await unitOfWork.Complete()) return Ok();
         

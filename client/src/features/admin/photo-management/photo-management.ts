@@ -13,7 +13,7 @@ export class PhotoManagement {
   private adminService = inject(AdminService);
 
   ngOnInit(): void {
-    // this.getPhotosForApproval();
+    this.getPhotosForApproval();
   }
 
   getPhotosForApproval() {
