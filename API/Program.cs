@@ -83,9 +83,13 @@ app.UseCors(x => x
 app.UseAuthentication(); // Who are you?
 app.UseAuthorization(); // Are they allowed to do what they are trying to do?
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/messages");
+app.MapFallbackToController("Index", "Fallback");
 
 using var scope = app.Services.CreateScope();
 
