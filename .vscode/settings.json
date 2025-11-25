@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/675c5344-0019-45b5-97fa-c6f1998639aa/resourceGroups/da-2025-rg/providers/Microsoft.Web/sites/da-mads",
+    "appService.deploySubpath": "API/bin/Publish"
+}
